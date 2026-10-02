@@ -1,0 +1,7 @@
+{
+  "name": "repro",
+  "private": true,
+  "optionalDependencies": {
+    "@repro/freebsd-only": "1.0.0"
+  }
+}

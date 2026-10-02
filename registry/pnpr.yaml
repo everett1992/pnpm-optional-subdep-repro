@@ -1,0 +1,9 @@
+# Serves the packages in ./storage. Nothing else exists, so every other
+# @repro/* name, including @repro/missing, is a 404.
+storage: ./storage
+registries:
+  local:
+    type: hosted
+    packages:
+      '@repro/*': {}
+defaultRegistry: local

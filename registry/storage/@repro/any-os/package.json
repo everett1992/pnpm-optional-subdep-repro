@@ -1,0 +1,32 @@
+{
+  "_id": "@repro/any-os",
+  "name": "@repro/any-os",
+  "dist-tags": {
+    "latest": "1.0.0"
+  },
+  "versions": {
+    "1.0.0": {
+      "name": "@repro/any-os",
+      "version": "1.0.0",
+      "dependencies": {
+        "@repro/missing": "1.0.0"
+      },
+      "readme": "ERROR: No README data found!",
+      "_id": "@repro/any-os@1.0.0",
+      "_nodeVersion": "24.14.1",
+      "_npmVersion": "11.19.1",
+      "dist": {
+        "integrity": "sha512-WMiFA1JHX9gWCAQwx2N/6TFFEvquXBs9qwcv9UkuhE/+9Yqtzk/GgtYaaxi8gAmNSOJTBa3jyH9zU2uKhOFHbw==",
+        "shasum": "3ad9c439abd74ca9c62349020dd1b20d8d1aca0f",
+        "tarball": "http://127.0.0.1:7698/@repro/any-os/-/@repro/any-os-1.0.0.tgz"
+      }
+    }
+  },
+  "access": null,
+  "time": {
+    "modified": "2020-01-01T00:00:00.000Z",
+    "created": "2020-01-01T00:00:00.000Z",
+    "1.0.0": "2020-01-01T00:00:00.000Z"
+  },
+  "readme": "ERROR: No README data found!"
+}

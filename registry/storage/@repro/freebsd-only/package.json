@@ -1,0 +1,35 @@
+{
+  "_id": "@repro/freebsd-only",
+  "name": "@repro/freebsd-only",
+  "dist-tags": {
+    "latest": "1.0.0"
+  },
+  "versions": {
+    "1.0.0": {
+      "name": "@repro/freebsd-only",
+      "version": "1.0.0",
+      "os": [
+        "freebsd"
+      ],
+      "dependencies": {
+        "@repro/missing": "1.0.0"
+      },
+      "readme": "ERROR: No README data found!",
+      "_id": "@repro/freebsd-only@1.0.0",
+      "_nodeVersion": "24.14.1",
+      "_npmVersion": "11.19.1",
+      "dist": {
+        "integrity": "sha512-FUbzjWtHKdxobvcZPn8sbJoHV1LRRbM3J7OXpO1Bs834yg6FWYHTDWvtijWEcb/FhAIrz4nGXbMa/nIphZXY7w==",
+        "shasum": "42bf9946a3770bbf4fb24f4804077b08128225d9",
+        "tarball": "http://127.0.0.1:7698/@repro/freebsd-only/-/@repro/freebsd-only-1.0.0.tgz"
+      }
+    }
+  },
+  "access": null,
+  "time": {
+    "modified": "2020-01-01T00:00:00.000Z",
+    "created": "2020-01-01T00:00:00.000Z",
+    "1.0.0": "2020-01-01T00:00:00.000Z"
+  },
+  "readme": "ERROR: No README data found!"
+}
