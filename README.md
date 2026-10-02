@@ -1,32 +1,46 @@
-# pnpm 12 fails on an unresolvable dependency of a skipped optional package
+# pnpm fails on an unresolvable dependency inside an optional subtree
 
-The project has one optional dependency, `@repro/freebsd-only`, which only
-installs on FreeBSD (`"os": ["freebsd"]`). It has a regular dependency on
-`@repro/missing`, which the registry doesn't have (404).
+Each project here has one optional dependency, and that package has a regular
+dependency on `@repro/missing`, which the registry doesn't have (404):
 
 ```
-repro -optional-> @repro/freebsd-only (os: freebsd) -> @repro/missing (404)
+freebsd-only/  repro -optional-> @repro/freebsd-only (os: freebsd) -> @repro/missing (404)
+any-os/        repro -optional-> @repro/any-os                     -> @repro/missing (404)
 ```
 
-`@repro/freebsd-only` is skipped on this platform, so `@repro/missing` is never
-needed. npm, pnpm 10 and pnpm 11 install successfully. pnpm 12 fails.
+| project | npm 11.19.1 | pnpm 10.34.6 | pnpm 11.28.3 | pnpm 12.8.1 |
+|---|---|---|---|---|
+| `freebsd-only` | OK | OK | OK | **`ERR_PNPM_FETCH_404`** |
+| `any-os` | OK | **`ERR_PNPM_FETCH_404`** | **`ERR_PNPM_FETCH_404`** | **`ERR_PNPM_FETCH_404`** |
 
-| package manager | result |
-|---|---|
-| npm 11.19.1 | OK |
-| pnpm 10.34.6 | OK |
-| pnpm 11.28.3 | OK |
-| pnpm 12.8.1 | **`ERR_PNPM_FETCH_404`** |
+There are two problems:
 
-The `os` field is what makes this a regression. `@repro/any-os` is the same
-package without it. With that package, pnpm 10, 11 and 12 all fail, and npm
-succeeds.
+1. **Regression in pnpm 12 (`freebsd-only`).** `@repro/freebsd-only` is
+   skipped on this platform, so `@repro/missing` is never needed. pnpm 10 and
+   11 make every dependency of a package that isn't installable on this
+   platform optional, so the 404 is skipped. pnpm 12 doesn't, and fails.
+2. **pnpm differs from npm (`any-os`).** npm lets anything under an optional
+   edge fail: it records `@repro/any-os` in `package-lock.json` as
+   `"optional": true` and installs nothing. In pnpm, only the optional edge
+   itself may fail. A regular dependency of an installable optional package
+   must resolve. That's also why the pnpm 10 and 11 result for `freebsd-only`
+   depends on the platform: on FreeBSD the package is installable and the
+   install fails there. You can see this without FreeBSD by adding
+   `supportedArchitectures: { os: [freebsd] }` to a `pnpm-workspace.yaml` in
+   `freebsd-only/`.
 
 ## Reproduce
 
-Run on any OS except FreeBSD. `registry/` holds a [pnpr](https://github.com/pnpm/pnpm/tree/main/pnpr)
-config and its storage directory with the two packages already in it.
-`.npmrc` routes the `@repro` scope to it.
+Run on any OS except FreeBSD.
+
+The repro uses a local [pnpr](https://github.com/pnpm/pnpm/tree/main/pnpr)
+registry so that it's self-contained. Nothing about the failure depends on
+pnpr: it happens with any registry that doesn't serve the dependency, such as
+a mirror that filters packages. A registry that returns a packument with no
+versions fails the same way, with `ERR_PNPM_NO_VERSIONS` instead of
+`ERR_PNPM_FETCH_404`. `registry/storage/` already contains the two packages, so
+nothing needs to be published. Each project's `.npmrc` routes only the `@repro`
+scope to it.
 
 Start the registry in one terminal:
 
@@ -37,9 +51,11 @@ npx @pnpm/pnpr@0.1.0-alpha.14 -c registry/pnpr.yaml
 Install in another terminal:
 
 ```sh
-for pm in npm@11.19.1 pnpm@10.34.6 pnpm@11.28.3 pnpm@12.8.1; do
-  rm -rf node_modules pnpm-lock.yaml package-lock.json
-  npx -y "$pm" install && echo "$pm: OK" || echo "$pm: FAILED"
+for dir in freebsd-only any-os; do
+  for pm in npm@11.19.1 pnpm@10.34.6 pnpm@11.28.3 pnpm@12.8.1; do
+    (cd "$dir" && rm -rf node_modules pnpm-lock.yaml package-lock.json &&
+      npx -y "$pm" install) && echo "$dir $pm: OK" || echo "$dir $pm: FAILED"
+  done
 done
 ```
 
@@ -53,7 +69,7 @@ Error: ERR_PNPM_FETCH_404
       @repro%2Fmissing: Not Found - 404
 ```
 
-pnpm 10 and 11 lock `@repro/freebsd-only` without its dependency:
+For `freebsd-only`, pnpm 10 and 11 lock the package without its dependency:
 
 ```yaml
 snapshots:
@@ -61,9 +77,6 @@ snapshots:
   '@repro/freebsd-only@1.0.0':
     optional: true
 ```
-
-To try the variant without the `os` field, change the dependency in
-`package.json` to `"@repro/any-os": "1.0.0"`.
 
 ## Related issues
 

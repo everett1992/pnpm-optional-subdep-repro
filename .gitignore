@@ -1,9 +1,7 @@
-node_modules/
-pnpm-lock.yaml
-package-lock.json
+**/node_modules/
+**/pnpm-lock.yaml
+**/package-lock.json
 # written by pnpr at runtime
 registry/storage/.package-index/
 registry/storage/.revisions/
 registry/storage/.pnpr-cache/
-# private investigation notes
-HANDOFF.md
