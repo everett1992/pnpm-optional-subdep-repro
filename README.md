@@ -38,8 +38,7 @@ registry so that it's self-contained. Nothing about the failure depends on
 pnpr: it happens with any registry that doesn't serve the dependency, such as
 a mirror that filters packages. A registry that returns a packument with no
 versions fails the same way, with `ERR_PNPM_NO_VERSIONS` instead of
-`ERR_PNPM_FETCH_404`. `registry/storage/` already contains the two packages, so
-nothing needs to be published. Each project's `.npmrc` routes only the `@repro`
+`ERR_PNPM_FETCH_404`. Each project's `.npmrc` routes only the `@repro`
 scope to it.
 
 Start the registry in one terminal:
